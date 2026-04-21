@@ -27,12 +27,14 @@ public class Employee {
     private String lastName;
     private String phoneNo;
     private String userName;
+    private String Password;
     private String personalEmail;
     private String gender;
     private LocalDate dateOfBirth;
     private String maritalStatus;
     private String timeZone;
     private String employmentType;
+
 
     //Job Details
     private LocalDate dateOfJoining;
@@ -43,6 +45,11 @@ public class Employee {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    //Company Reference
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
 
     //Self Reference

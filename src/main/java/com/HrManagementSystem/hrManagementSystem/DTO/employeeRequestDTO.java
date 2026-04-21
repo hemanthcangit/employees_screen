@@ -29,6 +29,8 @@ public class employeeRequestDTO {
     private String employmentType;
     private List<Long> managerId;
 
+    private String password;
+
     //Job Details
     private LocalDate dateOfJoining;
     private String jobCategory;

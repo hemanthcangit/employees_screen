@@ -9,6 +9,7 @@ import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class employeeController {
 
     @Operation(summary = "Create Employee")
     @PostMapping("/addEmployee")
+    @PreAuthorize("hasAuthority('ADD_USER')")
     public ResponseEntity<employeeResponseDTO> createEmployees(@RequestBody employeeRequestDTO empRequestDto){
         return ResponseEntity.ok(empService.create(empRequestDto));
     }
@@ -56,6 +58,7 @@ public class employeeController {
 
     @Operation(summary = "Delete Employee By ID")
     @DeleteMapping("/Delete/{id}")
+    @PreAuthorize("hasAuthority('DELETE_USER')")
     public ResponseEntity<String> delete(@PathVariable Long id){
         empService.deleteAnEmployee(id);
         return ResponseEntity.ok("Employee Deleted Successfully");

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import static org.hibernate.grammars.hql.HqlParser.AS;
 @Repository
 public interface employeeRepository extends JpaRepository<Employee,Long> {
@@ -23,4 +25,5 @@ public interface employeeRepository extends JpaRepository<Employee,Long> {
     Page<Employee> findByFirstNameContaining(String keyword, Pageable pageable);
 
 
+    Optional<Employee> findByUserNameOrWorkEmail(String userName, String workEmail);
 }

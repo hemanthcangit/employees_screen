@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,17 +21,21 @@ public class employeeService {
     @Autowired
     private employeeRepository employeeRepo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     //Employee Creation
     public employeeResponseDTO create(employeeRequestDTO dto){
         //From DTO to Entity
         Employee emp = mapToEntity(dto);
+        emp.setPassword(passwordEncoder.encode(dto.getPassword()));
         //Saving Employee Details into DB
         Employee saved = employeeRepo.save(emp);
         //Converting saved details back to DTO and returning
         return mapToResponse(saved);
     }
 
-    //Getting list of employees fromm DB
+    //Getting list of employees from DB
     public Page<employeeResponseDTO> getAllEmployees(int page,int Size, String sortBy, String sortDir){
         Sort sort = sortDir.equalsIgnoreCase("asc") ?
                 Sort.by(sortBy).ascending() :
@@ -113,7 +118,7 @@ public class employeeService {
         emp.setTimeZone(dto.getTimeZone());
         emp.setEmploymentType(dto.getEmploymentType());
         emp.setManager_id(dto.getManagerId());
-
+        emp.setPassword(dto.getPassword()); // raw password only
         //Job details
         emp.setUserName(dto.getUserName());
         emp.setWorkEmail(dto.getWorkEmail());
