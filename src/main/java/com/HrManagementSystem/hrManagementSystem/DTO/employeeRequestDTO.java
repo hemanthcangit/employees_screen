@@ -1,5 +1,6 @@
 package com.HrManagementSystem.hrManagementSystem.DTO;
 
+import com.HrManagementSystem.hrManagementSystem.Entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,8 @@ public class employeeRequestDTO {
     private String timeZone;
     private String employmentType;
     private List<Long> managerId;
+
+    private RoleDTO roleDTO;
 
     private String password;
 

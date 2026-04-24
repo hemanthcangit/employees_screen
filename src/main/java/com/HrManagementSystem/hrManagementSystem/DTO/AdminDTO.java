@@ -7,12 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class companyRegistrationDTO {
-    // Company details
-    private String companyName;
-
-    // Admin user details
-    private AdminDTO admin;
+@AllArgsConstructor
+public class AdminDTO {
+    private String firstName;
+    private String lastName;
+    private String workEmail;
+    private String password;
 }

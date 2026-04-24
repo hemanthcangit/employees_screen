@@ -9,10 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class companyRegistrationDTO {
-    // Company details
-    private String companyName;
-
-    // Admin user details
-    private AdminDTO admin;
+public class permissionDTO {
+    private String permissionName;
 }

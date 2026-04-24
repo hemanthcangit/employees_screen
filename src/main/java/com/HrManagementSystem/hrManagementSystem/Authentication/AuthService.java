@@ -1,5 +1,6 @@
 package com.HrManagementSystem.hrManagementSystem.Authentication;
 
+import com.HrManagementSystem.hrManagementSystem.DTO.AdminDTO;
 import com.HrManagementSystem.hrManagementSystem.DTO.LoginDTO;
 import com.HrManagementSystem.hrManagementSystem.DTO.companyRegistrationDTO;
 import com.HrManagementSystem.hrManagementSystem.DTO.employeeRequestDTO;
@@ -13,6 +14,8 @@ import com.HrManagementSystem.hrManagementSystem.Repository.employeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class AuthService {
@@ -37,7 +40,7 @@ public class AuthService {
 
     public String registerCompany(companyRegistrationDTO request) {
         if (companyRepo.count() > 0) {
-            throw new RuntimeException("Company already registered");
+            return "Company already exists. Please login.";
         }
         Role role = roleRepo.findByName("ADMIN")
                 .orElseThrow(() -> new RuntimeException("Role not found"));
@@ -46,17 +49,23 @@ public class AuthService {
         company.setCompanyName(request.getCompanyName());
         Company savedCompany = companyRepo.save(company);
 
-        employeeRequestDTO dto =request.getAdmin();
+        AdminDTO dto =request.getAdmin();
 
         // ✅ Create Admin User
-        
+
         Employee admin = new Employee();
         admin.setFirstName(dto.getFirstName());
         admin.setLastName(dto.getLastName());
-        admin.setUserName(dto.getUserName());
+        admin.setUserName(dto.getWorkEmail());
         admin.setPassword(passwordEncoder.encode(dto.getPassword()));
         admin.setWorkEmail(dto.getWorkEmail());
-        admin.setRole(role);
+        Role adminRole = roleRepo.findByName("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Admin role not found"));
+
+        admin.setRole(adminRole);
+        admin.setCompany(savedCompany);
+
+
         admin.setActive(true);
 
         employeeRepo.save(admin);
@@ -67,8 +76,13 @@ public class AuthService {
     public String login(LoginDTO dto) {
 
         Employee emp = employeeRepo
-                .findByUserNameOrWorkEmail(dto.getUsernameOrEmail(), dto.getUsernameOrEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .findByUserName(dto.getUsernameOrEmail());
+
+        if(emp==null){
+            emp = employeeRepo
+                    .findByWorkEmail(dto.getUsernameOrEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+      }
 
         // ✅ Password validation
         if (!passwordEncoder.matches(dto.getPassword(), emp.getPassword())) {

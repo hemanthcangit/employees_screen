@@ -1,5 +1,6 @@
 package com.HrManagementSystem.hrManagementSystem.DTO;
 
+import com.HrManagementSystem.hrManagementSystem.Entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,5 @@ public class employeeResponseDTO {
     private List<Long> managers;
     private LocalDate dateOfJoining;
     private String phoneNo;
-
+    private Role role;
 }

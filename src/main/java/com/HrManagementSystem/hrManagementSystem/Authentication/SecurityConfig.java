@@ -30,6 +30,7 @@ public class SecurityConfig {
                         // ✅ LOGIN MUST BE PUBLIC
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/company/**").permitAll()
                         // ✅ Swagger
                         .requestMatchers(
                                 "/swagger-ui/**",

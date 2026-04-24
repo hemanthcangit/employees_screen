@@ -58,7 +58,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 request.getServletPath().startsWith("/swagger-ui")) {
 
             filterChain.doFilter(request, response);
-            return;
         }
     }
 }

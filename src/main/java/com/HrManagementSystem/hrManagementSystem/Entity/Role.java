@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("ALL")
@@ -20,11 +22,13 @@ public class Role {
     private Long id;
     private String name;
 
+    private boolean isSystemRole;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    private Set<Permission> permissions;
+    private Set<Permission> permissions = new HashSet<>();
 }
