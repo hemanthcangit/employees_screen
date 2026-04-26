@@ -19,45 +19,57 @@ import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+
     @Autowired
     private JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
+            try {
+                String token = header.substring(7);
 
-            String token = header.substring(7);
+                Claims claims = jwtUtil.extractAllClaims(token);
 
-            Claims claims = jwtUtil.extractAllClaims(token);
+                String username = claims.getSubject();
 
-            String username = claims.getSubject();
+                List<String> permissions = claims.get("permissions", List.class);
 
-            List<String> permissions = claims.get("permissions", List.class);
+                List<SimpleGrantedAuthority> authorities =
+                        permissions.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .toList();
 
-            List<SimpleGrantedAuthority> authorities =
-                    permissions.stream()
-                            .map(SimpleGrantedAuthority::new)
-                            .toList();
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                null,
+                                authorities
+                        );
 
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(
-                            username,
-                            null,
-                            authorities
-                    );
+                SecurityContextHolder.getContext().setAuthentication(auth);
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            } catch (io.jsonwebtoken.ExpiredJwtException e) {
+
+                // 🔥 Handle expired token
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Token Expired. Please login again.");
+                return;
+
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid Token");
+                return;
+            }
         }
 
-        if (request.getServletPath().startsWith("/auth") ||
-                request.getServletPath().startsWith("/v3/api-docs") ||
-                request.getServletPath().startsWith("/swagger-ui")) {
-
-            filterChain.doFilter(request, response);
-        }
+        filterChain.doFilter(request, response);
     }
-}
+
+    }

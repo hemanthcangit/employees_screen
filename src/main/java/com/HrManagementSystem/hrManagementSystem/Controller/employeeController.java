@@ -23,12 +23,13 @@ public class employeeController {
 
     @Operation(summary = "Create Employee")
     @PostMapping("/addEmployee")
-    @PreAuthorize("hasAuthority('ADD_USER')")
+    @PreAuthorize("hasAuthority('CREATE_EMPLOYEE')")
     public ResponseEntity<employeeResponseDTO> createEmployees(@RequestBody employeeRequestDTO empRequestDto){
         return ResponseEntity.ok(empService.create(empRequestDto));
     }
     @Operation(summary = "Get all employees")
     @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_EMPLOYEES')")
     public ResponseEntity<Page<employeeResponseDTO>> getEmployee(@RequestParam int Page, @RequestParam int Size
     ,@RequestParam(defaultValue="id") String sortBy
     ,@RequestParam(defaultValue = "asc") String sortDir){
@@ -37,6 +38,7 @@ public class employeeController {
 
     @Operation(summary = "Get Employee By ID")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('VIEW_EMPLOYEES')")
     public ResponseEntity<employeeResponseDTO> getEmployeeById(@PathVariable Long id){
         return ResponseEntity.ok(empService.getById(id));
 
@@ -44,6 +46,7 @@ public class employeeController {
 
     @Operation(summary = "update Employee By Id")
     @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('EDIT_SUBORDINATES')")
     public ResponseEntity<employeeResponseDTO> update(@PathVariable Long id, @RequestBody
     employeeRequestDTO dto){
         return ResponseEntity.ok(empService.updateEmployee(id,dto));
@@ -51,6 +54,7 @@ public class employeeController {
 
     @Operation(summary = "Inactive EMployee By ID")
     @PutMapping("/inactive/{id}")
+    @PreAuthorize("hasAuthority('INACTIVE_EMPLOYEES')")
     public ResponseEntity<String> inactiveEmployee(@PathVariable Long id){
         empService.inactive(id);
         return ResponseEntity.ok("Employee made as inactive");
@@ -58,7 +62,7 @@ public class employeeController {
 
     @Operation(summary = "Delete Employee By ID")
     @DeleteMapping("/Delete/{id}")
-    @PreAuthorize("hasAuthority('DELETE_USER')")
+    @PreAuthorize("hasAuthority('DELETE_EMPLOYEES')")
     public ResponseEntity<String> delete(@PathVariable Long id){
         empService.deleteAnEmployee(id);
         return ResponseEntity.ok("Employee Deleted Successfully");

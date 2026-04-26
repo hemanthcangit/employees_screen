@@ -3,6 +3,8 @@ package com.HrManagementSystem.hrManagementSystem.Service;
 import com.HrManagementSystem.hrManagementSystem.DTO.employeeRequestDTO;
 import com.HrManagementSystem.hrManagementSystem.DTO.employeeResponseDTO;
 import com.HrManagementSystem.hrManagementSystem.Entity.Employee;
+import com.HrManagementSystem.hrManagementSystem.Entity.Role;
+import com.HrManagementSystem.hrManagementSystem.Repository.RoleRepository;
 import com.HrManagementSystem.hrManagementSystem.Repository.employeeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class employeeService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     //Employee Creation
     public employeeResponseDTO create(employeeRequestDTO dto){
@@ -67,6 +72,14 @@ public class employeeService {
         emp.setDateOfJoining(dto.getDateOfJoining());
         emp.setJobCategory(dto.getJobCategory());
 
+        if (dto.getRoleDTO() != null) {
+            Role role = roleRepository.findByName(dto.getRoleDTO().getRole_name())
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+
+            emp.setRole(role);
+        }
+
+
         return mapToResponse(employeeRepo.save(emp));
     }
 
@@ -102,6 +115,7 @@ public class employeeService {
         dto.setDateOfJoining(saved.getDateOfJoining());
         dto.setManagers(saved.getManager_id());
         dto.setPhoneNo(saved.getPhoneNo());
+        dto.setRole(saved.getRole());
         return dto;
     }
 
@@ -124,6 +138,14 @@ public class employeeService {
         emp.setWorkEmail(dto.getWorkEmail());
         emp.setDateOfJoining(dto.getDateOfJoining());
         emp.setJobCategory(dto.getJobCategory());
+
+        if (dto.getRoleDTO() != null) {
+            Role role = roleRepository.findByName(dto.getRoleDTO().getRole_name())
+                    .orElseThrow(() -> new RuntimeException("Role not found"));
+
+            emp.setRole(role);
+        }
+
 
         emp.setActive(true);
         return emp;

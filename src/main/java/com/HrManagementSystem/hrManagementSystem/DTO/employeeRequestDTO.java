@@ -19,7 +19,7 @@ public class employeeRequestDTO {
     @Schema(description = "First Name of employee", example = "Hemanth")
     private String firstName;
     @Schema(description = "Last Name of employee", example = "Pelluru")
-    private String LastName;
+    private String lastName;
     private String phoneNo;
     private String userName;
     private String personalEmail;
